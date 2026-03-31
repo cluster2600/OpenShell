@@ -294,6 +294,7 @@ If DNS is broken, all image pulls from the distribution registry will fail, as w
 | Container not found | Image not built | `mise run docker:build:cluster` (local) or re-deploy (remote) |
 | Container exited, OOMKilled | Insufficient memory | Increase host memory or reduce workload |
 | Container exited, non-zero exit | k3s crash, port conflict, privilege issue | Check `openshell doctor logs` for details |
+| `flag provided but not defined: -resolv-conf` | k3s v1.35.2+ removed the top-level `--resolv-conf` flag | Ensure the entrypoint passes `--kubelet-arg=resolv-conf=` instead of `--resolv-conf=` (fixed in #696) |
 | `/readyz` fails | k3s still starting or crashed | Wait longer or check container logs for k3s errors |
 | OpenShell pods `Pending` | Insufficient CPU/memory for scheduling, or PVC not bound | `openshell doctor exec -- kubectl describe pod -n openshell` and `openshell doctor exec -- kubectl get pvc -n openshell` |
 | OpenShell pods `CrashLoopBackOff` | Server application error | `openshell doctor exec -- kubectl -n openshell logs statefulset/openshell` |
