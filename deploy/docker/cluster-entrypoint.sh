@@ -18,7 +18,7 @@
 # embedded DNS resolver at 127.0.0.11. Docker's DNS listens on random high
 # ports (visible in the DOCKER_OUTPUT iptables chain), so we parse those ports
 # and set up DNAT rules to forward DNS traffic from k3s pods. We then point
-# k3s's --resolv-conf at the container's routable eth0 IP.
+# k3s's kubelet resolv-conf at the container's routable eth0 IP.
 #
 # Per k3s docs: "Manually specified resolver configuration files are not
 # subject to viability checks."
@@ -562,6 +562,8 @@ fi
 # routing to settle first.
 wait_for_default_route
 
-# Execute k3s with explicit resolv-conf.
+# Execute k3s, passing the custom resolv.conf as a kubelet argument.
+# k3s v1.35.2+ removed the top-level --resolv-conf flag; it must now be
+# passed through to kubelet via --kubelet-arg. See #696.
 # shellcheck disable=SC2086
-exec /bin/k3s "$@" --resolv-conf="$RESOLV_CONF" $EXTRA_KUBELET_ARGS
+exec /bin/k3s "$@" --kubelet-arg=resolv-conf="$RESOLV_CONF" $EXTRA_KUBELET_ARGS
